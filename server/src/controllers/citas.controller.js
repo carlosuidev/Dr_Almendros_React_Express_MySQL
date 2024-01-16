@@ -117,12 +117,12 @@ export const getCitasEmpleado = async (req, res) => {
     );
 
     if (rows.length <= 0) {
-      return res.json({ message: "No se han encontrado citas del empleado" });
+      return res.status(400).json({ message: "No se han encontrado citas del empleado" });
     }
 
-    res.json(rows);
+    res.status(200).json(rows);
   } catch (error) {
-    return res.json({ message: "Error al obtener la citas del empleado", error: error });
+    return res.status(500).json({ message: "Error al obtener la citas del empleado", error: error });
   }
 };
 
