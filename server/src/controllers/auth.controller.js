@@ -9,13 +9,13 @@ export const loginEmployee = async (req, res) => {
     );
 
     if (rows.length !== 1) {
-      return res.json({ message: "Las credenciales no coinciden" });
+      return res.status(400).json({ message: "Las credenciales no coinciden" });
     } else {
-      res.json(rows[0]);
+      res.status(200).json(rows[0]);
     }
   } catch (error) {
     console.log(error);
-    return res.json({ message: "Error al iniciar sesión" });
+    return res.status(500).json({ message: "Error al iniciar sesión" });
   }
 };
 
@@ -29,14 +29,14 @@ export const emailEmployee = async (req, res) => {
     );
 
     if (rows.length >= 1) {
-      return res.json({ uso: "Y" });
+      return res.status(200).json({ uso: "Y" });
     }else{
-      return res.json({ uso: "N" });
+      return res.status(200).json({ uso: "N" });
     }
     
   } catch (error) {
     console.log(error)
-    return res.json({ message: "Error al validar el correo", error: error });
+    return res.status(500).json({ message: "Error al validar el correo", error: error });
   }
 };
 
@@ -52,13 +52,13 @@ export const updatePassword = async (req, res) => {
     );
 
     if (result.affectedRows === 0){
-      return res.status(404).json({ message: "Error al actualizar la contraseña" });
+      return res.status(400).json({ message: "Error al actualizar la contraseña" });
     }else{
       const [rows] = await pool.query("SELECT * FROM empleados WHERE id = ?", [
         id,
       ]);
 
-      res.json(rows[0]);
+      res.status(200).json(rows[0]);
     }
 
   } catch (error) {

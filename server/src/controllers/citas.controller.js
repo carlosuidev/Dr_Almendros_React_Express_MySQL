@@ -8,10 +8,11 @@ export const getAllCitas = async (req, res) => {
       AND p.id = c.id_paciente
       AND s.id = c.id_servicio`
     );
-    res.json(rows);
+    res.status(200).json(rows);
   } catch (error) {
     return res
-      .json({ message: "Error al obtener las citas", error });
+      .status(500)
+      .json({ message: "Error al obtener las citas", error: error });
   }
 };
 
@@ -28,12 +29,12 @@ export const getOneCita = async (req, res) => {
     );
 
     if (rows.length <= 0) {
-      return res.json({ message: "Cita no encontrada" });
+      return res.status(400).json({ message: "Cita no encontrada" });
     }
 
-    res.json(rows[0]);
+    res.status(200).json(rows[0]);
   } catch (error) {
-    return res.json({ message: "Error al obtener la cita" });
+    return res.status(400).json({ message: "Error al obtener la cita", error: error });
   }
 };
 
@@ -43,12 +44,12 @@ export const deleteCita = async (req, res) => {
     const [rows] = await pool.query("DELETE FROM citas WHERE id = ?", [id]);
 
     if (rows.affectedRows <= 0) {
-      return res.json({ message: "Cita no encontrada" });
+      return res.status(400).json({ message: "Cita no encontrada" });
     }
 
-    return res.json({ message: "Borrada" });
+    return res.status(200).json({ message: "Borrada" });
   } catch (error) {
-    return res.json({ message: "Error al borrar la cita" });
+    return res.status(500).json({ message: "Error al borrar la cita", error: error });
   }
 };
 
@@ -69,9 +70,9 @@ export const createCita = async (req, res) => {
       [result.insertId]
     );
 
-    return res.json(rows[0]);
+    return res.status(201).json(rows[0]);
   } catch (error) {
-    return res.json(error);
+    return res.status(500).json({message: 'No se ha podido crear la cita', error: error});
   }
 };
 
@@ -86,7 +87,7 @@ export const updateCita = async (req, res) => {
     );
 
     if (result.affectedRows === 0)
-      return res.json({ message: "Cita no encontrada" });
+      return res.status(400).json({ message: "Cita no encontrada" });
 
     const [rows] = await pool.query(
       `SELECT c.id, c.estado, c.id_paciente, c.id_empleado, c.id_servicio, c.descripcion, c.fecha, c.hora, e.nombre AS nombre_empleado, p.nombre as nombre_paciente, p.alergias, s.servicio, s.coste FROM citas c, empleados e, servicios s, pacientes p 
@@ -97,9 +98,9 @@ export const updateCita = async (req, res) => {
       [id]
     );
 
-    res.json(rows[0]);
+    res.satus(200).json(rows[0]);
   } catch (error) {
-    return res.json({ message: "Error al actualizar la cita", error: error});
+    return res.status(500).json({ message: "Error al actualizar la cita", error: error});
   }
 };
 
@@ -121,7 +122,7 @@ export const getCitasEmpleado = async (req, res) => {
 
     res.json(rows);
   } catch (error) {
-    return res.json({ message: "Error al obtener la citas del empleado" });
+    return res.json({ message: "Error al obtener la citas del empleado", error: error });
   }
 };
 
@@ -138,11 +139,11 @@ export const getCitasPaciente = async (req, res) => {
     );
 
     if (rows.length <= 0) {
-      return res.json({ message: "No se han encontrado citas del paciente" });
+      return res.status(400).json({ message: "No se han encontrado citas del paciente" });
     }
 
-    res.json(rows);
+    res.status(200).json(rows);
   } catch (error) {
-    return res.json({ message: "Error al obtener la citas del paciente" });
+    return res.status(500).json({ message: "Error al obtener la citas del paciente", error: error });
   }
 };
